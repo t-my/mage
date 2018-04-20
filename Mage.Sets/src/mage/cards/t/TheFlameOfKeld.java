@@ -28,15 +28,17 @@
 package mage.cards.t;
 
 import java.util.UUID;
+
 import mage.MageObject;
 import mage.abilities.Ability;
 import mage.abilities.common.SagaAbility;
+import mage.abilities.effects.ContinuousEffect;
 import mage.abilities.effects.ReplacementEffectImpl;
 import mage.abilities.effects.common.DrawCardSourceControllerEffect;
 import mage.abilities.effects.common.discard.DiscardHandControllerEffect;
+import mage.constants.*;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
-import mage.constants.*;
 import mage.game.Game;
 import mage.game.events.GameEvent;
 import mage.game.permanent.Permanent;
@@ -50,7 +52,7 @@ public class TheFlameOfKeld extends CardImpl {
 
     public TheFlameOfKeld(UUID ownerId, CardSetInfo setInfo) {
         super(ownerId, setInfo, new CardType[]{CardType.ENCHANTMENT}, "{1}{R}");
-
+        
         this.subtype.add(SubType.SAGA);
 
         // <i>(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)</i>
@@ -97,7 +99,7 @@ class TheFlameOfKeldDamageEffect extends ReplacementEffectImpl {
 
     @Override
     public boolean checksEventType(GameEvent event, Game game) {
-        switch (event.getType()) {
+        switch(event.getType()) {
             case DAMAGE_CREATURE:
             case DAMAGE_PLANESWALKER:
             case DAMAGE_PLAYER:
@@ -109,12 +111,13 @@ class TheFlameOfKeldDamageEffect extends ReplacementEffectImpl {
 
     @Override
     public boolean applies(GameEvent event, Ability source, Game game) {
-        if (source.getControllerId().equals(game.getControllerId(event.getSourceId()))) {
+        if(source.getControllerId().equals(game.getControllerId(event.getSourceId()))) {
             MageObject sourceObject;
             Permanent sourcePermanent = game.getPermanentOrLKIBattlefield(event.getSourceId());
-            if (sourcePermanent == null) {
+            if(sourcePermanent == null) {
                 sourceObject = game.getObject(event.getSourceId());
-            } else {
+            }
+            else {
                 sourceObject = sourcePermanent;
             }
             return sourceObject != null && sourceObject.getColor(game).isRed() && !sourceObject.getId().equals(source.getSourceId());
@@ -123,8 +126,7 @@ class TheFlameOfKeldDamageEffect extends ReplacementEffectImpl {
     }
 
     @Override
-    public TheFlameOfKeldDamageEffect copy() {
-        return new TheFlameOfKeldDamageEffect(this);
+    public ContinuousEffect copy() {
+        return null;
     }
-
 }

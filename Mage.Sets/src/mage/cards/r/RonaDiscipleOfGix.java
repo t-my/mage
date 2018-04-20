@@ -72,9 +72,8 @@ public class RonaDiscipleOfGix extends CardImpl {
         this.toughness = new MageInt(2);
 
         // When Rona, Disciple of Gix enters the battlefield, you may exile target historic card from your graveyard.
-        String abilityText = "When {this} enters the battlefield, you may exile target historic card from your graveyard. <i>(Artifacts, legendaries, and Sagas are historic.)</i>";
-        Ability ability = new EntersBattlefieldTriggeredAbility(new ExileTargetEffect().setToSourceExileZone(true), true, abilityText);
-        ability.addTarget(new TargetCardInYourGraveyard(new FilterHistoricCard("historic card from your graveyard")));
+        Ability ability = new EntersBattlefieldTriggeredAbility(new ExileTargetEffect().setToSourceExileZone(true), true);
+        ability.addTarget(new TargetCardInYourGraveyard(new FilterHistoricCard()));
         this.addAbility(ability);
 
         // You may cast nonland cards exiled with Rona.

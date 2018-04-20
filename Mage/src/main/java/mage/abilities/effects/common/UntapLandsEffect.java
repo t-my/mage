@@ -57,7 +57,7 @@ public class UntapLandsEffect extends OneShotEffect {
         super(Outcome.Untap);
         this.amount = amount;
         this.upTo = upTo;
-        staticText = "untap " + (upTo ? "up to " : "") + CardUtil.numberToText(amount, staticText) + " lands";
+        staticText = "Untap " + (upTo ? "up to " : "") + CardUtil.numberToText(amount, staticText) + " lands";
     }
 
     public UntapLandsEffect(final UntapLandsEffect effect) {

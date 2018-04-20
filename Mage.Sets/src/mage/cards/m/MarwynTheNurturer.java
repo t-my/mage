@@ -1,9 +1,10 @@
 package mage.cards.m;
 
 import java.util.UUID;
+
 import mage.MageInt;
 import mage.Mana;
-import mage.abilities.common.EntersBattlefieldControlledTriggeredAbility;
+import mage.abilities.common.EntersBattlefieldAllTriggeredAbility;
 import mage.abilities.dynamicvalue.common.SourcePermanentPowerCount;
 import mage.abilities.effects.common.counter.AddCountersSourceEffect;
 import mage.abilities.mana.DynamicManaAbility;
@@ -18,7 +19,8 @@ import mage.filter.predicate.mageobject.SubtypePredicate;
 import mage.filter.predicate.permanent.AnotherPredicate;
 
 /**
- * @author JRHerlehy Created on 4/7/18.
+ * @author JRHerlehy
+ *         Created on 4/7/18.
  */
 public class MarwynTheNurturer extends CardImpl {
 
@@ -37,10 +39,10 @@ public class MarwynTheNurturer extends CardImpl {
         this.toughness = new MageInt(1);
 
         // Whenever another Elf enters the battlefield under your control, put a +1/+1 counter on Marwyn, the Nurturer.
-        this.addAbility(new EntersBattlefieldControlledTriggeredAbility(new AddCountersSourceEffect(CounterType.P1P1.createInstance()), filter));
+        this.addAbility(new EntersBattlefieldAllTriggeredAbility(new AddCountersSourceEffect(CounterType.P1P1.createInstance()), filter));
 
         // {T}: Add an amount of {G} equal to Marwyn’s power.
-        this.addAbility(new DynamicManaAbility(Mana.GreenMana(1), new SourcePermanentPowerCount(), "Add an amount of {G} equal to {this}’s power"));
+        this.addAbility(new DynamicManaAbility(Mana.GreenMana(1), new SourcePermanentPowerCount(), "Add an amount of {G} equal to Marwyn’s power"));
     }
 
     public MarwynTheNurturer(final MarwynTheNurturer card) {

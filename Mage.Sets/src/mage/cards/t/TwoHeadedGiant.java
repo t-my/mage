@@ -39,7 +39,6 @@ import mage.constants.SubType;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
-import mage.constants.Duration;
 import mage.constants.Outcome;
 import mage.game.Game;
 import mage.players.Player;
@@ -99,9 +98,9 @@ class TwoHeadedGiantEffect extends OneShotEffect {
         boolean head2 = player.flipCoin(game);
         if (head1 == head2) {
             if (head1) {
-                game.addEffect(new GainAbilitySourceEffect(DoubleStrikeAbility.getInstance(), Duration.EndOfTurn), source);
+                new GainAbilitySourceEffect(DoubleStrikeAbility.getInstance()).apply(game, source);
             } else {
-                game.addEffect(new GainAbilitySourceEffect(new MenaceAbility(), Duration.EndOfTurn), source);
+                new GainAbilitySourceEffect(new MenaceAbility()).apply(game, source);
             }
         }
         return true;

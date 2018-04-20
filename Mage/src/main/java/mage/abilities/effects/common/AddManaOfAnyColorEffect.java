@@ -52,7 +52,7 @@ public class AddManaOfAnyColorEffect extends BasicManaEffect {
                 .append(CardUtil.numberToText(amount))
                 .append(" mana of any ")
                 .append(amount > 1 ? "one " : "")
-                .append("color").toString();
+                .append("color to your mana pool").toString();
     }
 
     public AddManaOfAnyColorEffect(final AddManaOfAnyColorEffect effect) {

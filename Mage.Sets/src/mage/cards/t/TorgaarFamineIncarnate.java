@@ -67,14 +67,13 @@ public class TorgaarFamineIncarnate extends CardImpl {
         this.toughness = new MageInt(6);
 
         // As an additional cost to cast this spell, you may sacrifice any number of creatures.
-        Cost cost = new SacrificeXTargetCost(StaticFilters.FILTER_CONTROLLED_CREATURE_SHORT_TEXT);
-        cost.setText("As an additional cost to cast this spell, you may sacrifice any number of creatures.");
-        this.getSpellAbility().addCost(cost);
+        this.getSpellAbility().addCost(new SacrificeXTargetCost(StaticFilters.FILTER_CONTROLLED_CREATURE_SHORT_TEXT));
         // This spell costs {2} less to cast for each creature sacrificed this way.
-        this.addAbility(new SimpleStaticAbility(Zone.STACK, new TorgaarFamineIncarnateEffectCostReductionEffect()));
+        Ability ability = new SimpleStaticAbility(Zone.STACK, new TorgaarFamineIncarnateEffectCostReductionEffect());
+        this.addAbility(ability);
 
         // When Torgaar, Famine Incarnate enters the battlefield, up to one target player's life total becomes half their starting life total, rounded down.
-        Ability ability = new EntersBattlefieldTriggeredAbility(new TorgaarFamineIncarnateEffect(), false);
+        ability = new EntersBattlefieldTriggeredAbility(new TorgaarFamineIncarnateEffect(), false);
         ability.addTarget(new TargetPlayer(0, 1, false));
         this.addAbility(ability);
 

@@ -46,6 +46,7 @@ import mage.game.Game;
 import mage.game.permanent.Permanent;
 import mage.target.targetpointer.FixedTarget;
 
+
 /**
  *
  * @author Will
@@ -53,10 +54,10 @@ import mage.target.targetpointer.FixedTarget;
 public class HelmOfTheHost extends CardImpl {
 
     public HelmOfTheHost(UUID ownerId, CardSetInfo setInfo) {
-        super(ownerId, setInfo, new CardType[]{CardType.ARTIFACT}, "{4}");
+        super(ownerId,setInfo,new CardType[]{CardType.ARTIFACT},"{4}");
         this.addSuperType(SuperType.LEGENDARY);
         this.subtype.add(SubType.EQUIPMENT);
-
+        
         // At the beginning of combat on your turn, create a token that’s a copy of equipped creature, except the token isn’t legendary if equipped creature is legendary. That token gains haste.
         TriggeredAbility ability = new BeginningOfCombatTriggeredAbility(
                 new HelmOfTheHostEffect(),
@@ -64,7 +65,7 @@ public class HelmOfTheHost extends CardImpl {
                 false
         );
         this.addAbility(ability);
-
+        
         // Equip {5}
         this.addAbility(new EquipAbility(Outcome.AddAbility, new GenericManaCost(5)));
     }
@@ -80,10 +81,9 @@ public class HelmOfTheHost extends CardImpl {
 }
 
 class HelmOfTheHostEffect extends OneShotEffect {
-
     public HelmOfTheHostEffect() {
         super(Outcome.PutCreatureInPlay);
-        this.staticText = "create a token that’s a copy of equipped creature, except the token isn’t legendary if equipped creature is legendary. That token gains haste.";
+        this.staticText = "Create a token that’s a copy of equipped creature, except the token isn’t legendary if equipped creature is legendary. That token gains haste.";
     }
 
     public HelmOfTheHostEffect(final HelmOfTheHostEffect effect) {

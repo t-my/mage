@@ -169,7 +169,6 @@ public class LookLibraryAndPickControllerEffect extends LookLibraryControllerEff
      * @param targetZonePickedCards
      * @param optional
      * @param putOnTopSelected
-     * @param anyOrder
      */
     public LookLibraryAndPickControllerEffect(DynamicValue numberOfCards,
             boolean mayShuffleAfter, DynamicValue numberToPick,

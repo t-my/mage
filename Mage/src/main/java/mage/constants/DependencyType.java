@@ -42,7 +42,6 @@ public enum DependencyType {
 
     AuraAddingRemoving,
     ArtifactAddingRemoving,
-    AddingAbility,
     BecomeForest,
     BecomeIsland,
     BecomeMountain,
