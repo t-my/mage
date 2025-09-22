@@ -243,7 +243,7 @@ public final class GamePanel extends javax.swing.JPanel {
         JPanel pnlBattlefieldAndPhases = new JPanel(new BorderLayout());
         pnlBattlefieldAndPhases.setOpaque(false);
         pnlBattlefieldAndPhases.add(pnlBattlefield, BorderLayout.CENTER);
-        pnlBattlefieldAndPhases.add(phasesContainer, BorderLayout.EAST);
+        pnlBattlefieldAndPhases.add(phasesContainer, BorderLayout.SOUTH);
         pnlHelperHandButtonsStackArea.add(pnlBattlefieldAndPhases, BorderLayout.CENTER);
         // commands (feedback + hand + skip + stack)
         JPanel pnlCommandsRoot = new JPanel(new BorderLayout());
@@ -571,13 +571,13 @@ public final class GamePanel extends javax.swing.JPanel {
         // phase buttons - sizes
         int buttonSize = GUISizeHelper.gamePhaseButtonSize;
         guiScale = GUISizeHelper.dialogGuiScale;
-        hGap = GUISizeHelper.guiSizeScale(PHASE_BUTTONS_SPACE_H, guiScale);
+        hGap = 0; // Remove horizontal spacing between phase buttons
         vGap = GUISizeHelper.guiSizeScale(PHASE_BUTTONS_SPACE_V, guiScale);
-        BoxLayout layout = new BoxLayout(jPhases, BoxLayout.Y_AXIS);
+        BoxLayout layout = new BoxLayout(jPhases, BoxLayout.X_AXIS);
         jPhases.setLayout(layout);
-        int fullPhaseWidth = Math.round(1.5f * GUISizeHelper.gamePhaseButtonSize);
-        jPhases.setPreferredSize(new Dimension(fullPhaseWidth, (vGap * phaseButtons.size()) + (buttonSize * phaseButtons.size())));
-        jPhases.setMaximumSize(new Dimension(fullPhaseWidth, Short.MAX_VALUE));
+        int fullPhaseHeight = Math.round(1.5f * GUISizeHelper.gamePhaseButtonSize);
+        jPhases.setPreferredSize(new Dimension(buttonSize * phaseButtons.size(), fullPhaseHeight));
+        jPhases.setMaximumSize(new Dimension(Short.MAX_VALUE, fullPhaseHeight));
         phaseButtons.forEach((phaseName, phaseButton) -> {
             phaseButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
         });
@@ -1546,10 +1546,10 @@ public final class GamePanel extends javax.swing.JPanel {
         phaseButtons.forEach((phaseName, phaseButton) -> {
             if (phaseName.equals(currentPhaseName)) {
                 //phaseButton.setBorder(this.phaseButtonBorderActive);
-                phaseButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+                phaseButton.setAlignmentY(Component.BOTTOM_ALIGNMENT);
             } else {
                 //phaseButton.setBorder(this.phaseButtonBorderInactive);
-                phaseButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+                phaseButton.setAlignmentY(Component.CENTER_ALIGNMENT);
             }
         });
         jPhases.invalidate();
@@ -2740,7 +2740,7 @@ public final class GamePanel extends javax.swing.JPanel {
         pnlReplay.setOpaque(false);
 
         // phases buttons
-        phasesContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        phasesContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         phasesContainer.setOpaque(false);
         phasesContainer.add(jPhases);
 
@@ -3041,6 +3041,8 @@ public final class GamePanel extends javax.swing.JPanel {
         HoverButton button = new HoverButton("", ImageManagerImpl.instance.getPhaseImage(name, buttonSize), rect);
         button.setToolTipText(name.replaceAll("_", " "));
         button.setPreferredSize(new Dimension(buttonSize, buttonSize));
+        button.setMaximumSize(new Dimension(buttonSize, buttonSize));
+        button.setMinimumSize(new Dimension(buttonSize, buttonSize));
         button.addMouseListener(mouseAdapter);
         phaseButtons.put(name, button);
         jPhases.add(button);
