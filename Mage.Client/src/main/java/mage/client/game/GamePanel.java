@@ -243,8 +243,16 @@ public final class GamePanel extends javax.swing.JPanel {
         JPanel pnlBattlefieldAndPhases = new JPanel(new BorderLayout());
         pnlBattlefieldAndPhases.setOpaque(false);
         pnlBattlefieldAndPhases.add(pnlBattlefield, BorderLayout.CENTER);
-        pnlBattlefieldAndPhases.add(phasesContainer, BorderLayout.SOUTH);
-        pnlBattlefieldAndPhases.add(phasesContainerVertical, BorderLayout.EAST);
+
+        // Add appropriate phase layout based on user preference
+        String layoutStyle = mage.client.dialog.PreferencesDialog.getCurrentLayoutStyle();
+        if (mage.client.dialog.PreferencesDialog.LAYOUT_STYLE_MTGO.equals(layoutStyle)) {
+            // MTGO layout: horizontal phases at bottom
+            pnlBattlefieldAndPhases.add(phasesContainer, BorderLayout.SOUTH);
+        } else {
+            // Xmage layout: vertical phases on right side
+            pnlBattlefieldAndPhases.add(phasesContainerVertical, BorderLayout.EAST);
+        }
         pnlHelperHandButtonsStackArea.add(pnlBattlefieldAndPhases, BorderLayout.CENTER);
         // commands (feedback + hand + skip + stack)
         JPanel pnlCommandsRoot = new JPanel(new BorderLayout());

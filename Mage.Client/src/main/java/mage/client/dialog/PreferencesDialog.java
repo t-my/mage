@@ -113,6 +113,9 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
     // Themes
     public static final String KEY_THEME = "themeSelection";
+    public static final String KEY_LAYOUT_STYLE = "layoutStyle";
+    public static final String LAYOUT_STYLE_XMAGE = "xmage";
+    public static final String LAYOUT_STYLE_MTGO = "mtgo";
 
     // Phases
     public static final String UPKEEP_YOU = "upkeepYou";
@@ -648,6 +651,10 @@ public class PreferencesDialog extends javax.swing.JDialog {
         }
     }
 
+    public static String getCurrentLayoutStyle() {
+        return getCachedValue(KEY_LAYOUT_STYLE, LAYOUT_STYLE_XMAGE);
+    }
+
     private final JFileChooser fc = new JFileChooser();
 
     {
@@ -694,6 +701,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         txtImageFolderPath.setEditable(false);
         cbProxyType.setModel(new DefaultComboBoxModel<>(Connection.ProxyType.values()));
         cbTheme.setModel(new DefaultComboBoxModel<>(ThemeType.values()));
+        cbLayoutStyle.setModel(new DefaultComboBoxModel<>(new String[]{LAYOUT_STYLE_XMAGE, LAYOUT_STYLE_MTGO}));
         addAvatars();
 
         // prepare size table (you can change settings order by new position index)
@@ -944,6 +952,8 @@ public class PreferencesDialog extends javax.swing.JDialog {
         themesCategory = new javax.swing.JPanel();
         lbSelectLabel = new javax.swing.JLabel();
         cbTheme = new javax.swing.JComboBox<>();
+        lbLayoutStyleLabel = new javax.swing.JLabel();
+        cbLayoutStyle = new javax.swing.JComboBox<>();
         lbThemeHint = new javax.swing.JLabel();
         panelBackgroundImages = new javax.swing.JPanel();
         cbUseDefaultBackground = new javax.swing.JCheckBox();
@@ -2122,6 +2132,18 @@ public class PreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        lbLayoutStyleLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbLayoutStyleLabel.setText("Layout style:");
+        lbLayoutStyleLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        lbLayoutStyleLabel.setPreferredSize(new java.awt.Dimension(110, 16));
+        lbLayoutStyleLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+
+        cbLayoutStyle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbLayoutStyleActionPerformed(evt);
+            }
+        });
+
         lbThemeHint.setText("<html><b>WARNING</b>, some color settings and images will be applied after app RESTART");
 
         org.jdesktop.layout.GroupLayout themesCategoryLayout = new org.jdesktop.layout.GroupLayout(themesCategory);
@@ -2130,11 +2152,14 @@ public class PreferencesDialog extends javax.swing.JDialog {
             themesCategoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(themesCategoryLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(lbSelectLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 96, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(themesCategoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(lbSelectLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 96, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(lbLayoutStyleLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 96, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(themesCategoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(lbThemeHint, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cbTheme, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 313, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(cbTheme, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 313, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(cbLayoutStyle, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 313, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         themesCategoryLayout.setVerticalGroup(
@@ -2144,6 +2169,10 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .add(themesCategoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(cbTheme, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(lbSelectLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(themesCategoryLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(cbLayoutStyle, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(lbLayoutStyleLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(lbThemeHint, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -3087,6 +3116,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
         // Themes
         saveTheme(false);
+        saveLayoutStyle();
 
         // Avatar
         if (selectedAvatarId < MIN_AVATAR_ID || selectedAvatarId > MAX_AVATAR_ID) {
@@ -3119,6 +3149,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
         if (refreshTheme) {
             loadTheme();
         }
+    }
+
+    private void saveLayoutStyle() {
+        Preferences prefs = MageFrame.getPreferences();
+        save(prefs, getInstance().cbLayoutStyle, KEY_LAYOUT_STYLE);
     }
 
     private static void saveGUISize(boolean refreshGUI, boolean refreshTheme) {
@@ -3301,6 +3336,12 @@ public class PreferencesDialog extends javax.swing.JDialog {
             saveTheme(true);
         }
     }//GEN-LAST:event_cbThemeActionPerformed
+
+    private void cbLayoutStyleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbLayoutStyleActionPerformed
+        if (!isLoadingTheme) {
+            saveLayoutStyle();
+        }
+    }//GEN-LAST:event_cbLayoutStyleActionPerformed
 
     private void showProxySettings() {
         Connection.ProxyType proxyType = (Connection.ProxyType) cbProxyType.getSelectedItem();
@@ -3584,9 +3625,15 @@ public class PreferencesDialog extends javax.swing.JDialog {
         isLoadingTheme = true;
         try {
             getInstance().cbTheme.setSelectedItem(PreferencesDialog.getCurrentTheme());
+            loadLayoutStyleSettings(prefs);
         } finally {
             isLoadingTheme = false;
         }
+    }
+
+    private static void loadLayoutStyleSettings(Preferences prefs) {
+        String layoutStyle = getCachedValue(KEY_LAYOUT_STYLE, LAYOUT_STYLE_XMAGE);
+        getInstance().cbLayoutStyle.setSelectedItem(layoutStyle);
     }
 
     private static void loadSelectedAvatar(Preferences prefs) {
@@ -4080,6 +4127,8 @@ public class PreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox cbStopOnNewStackObjects;
     private javax.swing.JComboBox<String> cbTargetAutoChooseLevel;
     private javax.swing.JComboBox<ThemeType> cbTheme;
+    private javax.swing.JLabel lbLayoutStyleLabel;
+    private javax.swing.JComboBox<String> cbLayoutStyle;
     private javax.swing.JCheckBox cbUseDefaultBackground;
     private javax.swing.JCheckBox cbUseDefaultBattleImage;
     private javax.swing.JCheckBox cbUseDefaultImageFolder;
