@@ -393,6 +393,7 @@ public final class GamePanel extends javax.swing.JPanel {
 
         this.handContainer.cleanUp();
         this.stackObjects.cleanUp();
+        this.floatingStackWindow.cleanUp();
         for (Map.Entry<UUID, PlayAreaPanel> playAreaPanelEntry : players.entrySet()) {
             playAreaPanelEntry.getValue().CleanUp();
         }
@@ -484,6 +485,7 @@ public final class GamePanel extends javax.swing.JPanel {
         initComponents = true;
         setGUISize(true);
         stackObjects.changeGUISize();
+        floatingStackWindow.changeGUISize();
         feedbackPanel.changeGUISize();
         handContainer.changeGUISize();
         for (PlayAreaPanel playAreaPanel : players.values()) {
@@ -1494,6 +1496,8 @@ public final class GamePanel extends javax.swing.JPanel {
 
     private void displayStack(GameView game, BigCard bigCard, FeedbackPanel feedbackPanel, UUID gameId) {
         this.stackObjects.loadCards(game.getStack(), bigCard, gameId, true);
+        // Also update the floating stack window
+        this.floatingStackWindow.updateStack(game.getStack(), bigCard, gameId);
     }
 
     private void updateActivePhase(PhaseStep currentStep) {
@@ -2343,6 +2347,7 @@ public final class GamePanel extends javax.swing.JPanel {
         //pnlShortCuts.setPreferredSize(new Dimension(410, 72));
 
         stackObjects = new mage.client.cards.Cards();
+        floatingStackWindow = new FloatingStackWindow();
 
         // split: [hand] <|> [stack]
         splitHandAndStack = new javax.swing.JSplitPane();
@@ -3254,6 +3259,7 @@ public final class GamePanel extends javax.swing.JPanel {
 
     private mage.client.cards.Cards stackObjects;
     private HandPanel handContainer;
+    private FloatingStackWindow floatingStackWindow;
 
     private JPanel jPhases;
     private JPanel phasesContainer;
