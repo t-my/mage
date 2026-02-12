@@ -3522,7 +3522,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
             updateCache(KEY_CARD_IMAGES_PATH, path);
         }
         load(prefs, dialog.cbSaveToZipFiles, KEY_CARD_IMAGES_SAVE_TO_ZIP, "true", "false");
-        load(prefs, dialog.cbAutoDownloadImages, KEY_CARD_IMAGES_AUTO_DOWNLOAD, "true", "false");
+        load(prefs, dialog.cbAutoDownloadImages, KEY_CARD_IMAGES_AUTO_DOWNLOAD, "true", "true");
         dialog.cbPreferredImageLanguage.setSelectedItem(MageFrame.getPreferences().get(KEY_CARD_IMAGES_PREF_LANGUAGE, CardLanguage.ENGLISH.getCode()));
 
         // rendering settings
@@ -3716,7 +3716,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
     }
 
     public static boolean isAutoDownloadEnabled() {
-        return PreferencesDialog.getCachedValue(PreferencesDialog.KEY_CARD_IMAGES_AUTO_DOWNLOAD, "false").equals("true");
+        return PreferencesDialog.getCachedValue(PreferencesDialog.KEY_CARD_IMAGES_AUTO_DOWNLOAD, "true").equals("true");
     }
 
     private static void load(Preferences prefs, JCheckBox checkBox, String propName, String yesValue) {
