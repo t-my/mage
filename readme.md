@@ -1,10 +1,12 @@
 # XMage — Custom Build
 
-Custom XMage build based on the [official XMage project](https://github.com/magefree/mage), with additional fixes applied on top of tagged releases. 
+* Custom XMage build based on the [official XMage project](https://github.com/magefree/mage).
+* Fully compatible with the official server  
 
 # Customizations vs the official build
 
-* Add changes here
+* Downloads images automatically! (client)
+* Docker buld (server)
 
 ## Downloads
 
