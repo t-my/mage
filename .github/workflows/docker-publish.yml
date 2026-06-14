@@ -4,6 +4,15 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      upstream_tag:
+        description: >-
+          Rebase the custom stack onto an upstream release before building.
+          Leave EMPTY to just (re)build the current master.
+          Use "latest" to auto-pick the newest upstream release tag,
+          or give an exact tag e.g. "xmage_1.4.60V1".
+        required: false
+        default: ""
 
 env:
   REGISTRY: ghcr.io
@@ -23,6 +32,56 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      # One-click release: rebase the custom commit stack onto a new upstream
+      # release tag, then build/publish the result in this same run. Skipped on
+      # plain pushes and on input-less manual runs (which just rebuild master).
+      # On a cherry-pick conflict the job fails (you get the failure email) —
+      # do that release by hand per RELEASING.md.
+      - name: Rebase custom stack onto upstream release
+        if: github.event_name == 'workflow_dispatch' && inputs.upstream_tag != ''
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git remote add upstream https://github.com/magefree/mage.git 2>/dev/null || true
+          git fetch --tags --quiet upstream
+
+          INPUT="${{ inputs.upstream_tag }}"
+          if [ "$INPUT" = "latest" ]; then
+            TAG=$(git tag -l 'xmage_*' | sort -V | tail -1)
+            echo "Auto-selected newest upstream tag: $TAG"
+          else
+            TAG="$INPUT"
+          fi
+          if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Upstream tag '$TAG' not found"; exit 1
+          fi
+
+          OLD_MASTER=$(git rev-parse HEAD)
+          PREV=$(git describe --tags --match 'xmage_*' --abbrev=0 HEAD)
+          echo "Current base: $PREV   Target: $TAG"
+          if [ "$PREV" = "$TAG" ]; then
+            echo "::error::master is already based on $TAG — nothing to do"; exit 1
+          fi
+          echo "Custom commits to carry over: $(git rev-list --count "$PREV..$OLD_MASTER")"
+
+          # Rebuild the base = upstream tag + custom stack, in order.
+          git checkout -B master "refs/tags/$TAG"
+          if ! git cherry-pick "$PREV..$OLD_MASTER"; then
+            git cherry-pick --abort || true
+            echo "::error::Cherry-pick conflict rebasing the custom stack onto $TAG. Do this release by hand (see RELEASING.md)."
+            exit 1
+          fi
+
+          # Publish the new base. The upstream tag MUST be on origin so the
+          # version-detection step below resolves correctly. The force-push to
+          # master does not re-trigger this workflow (GITHUB_TOKEN pushes don't),
+          # so the current run continues and builds the rebased tree.
+          git push origin "refs/tags/$TAG"
+          git push --force origin master
+          echo "Rebased master onto $TAG and pushed. Continuing to build & publish."
 
       - name: Determine xmage version
         id: version

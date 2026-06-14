@@ -7,6 +7,19 @@ workflow ([`.github/workflows/docker-publish.yml`](.github/workflows/docker-publ
 which builds, publishes the GitHub release, pushes the Docker image, and updates the
 GitHub Pages `config.json`. **You do not build or upload the release by hand.**
 
+## TL;DR — cut a release with one click
+
+1. Go to **Actions → "Build and Publish" → Run workflow**.
+2. In **upstream_tag**, enter the new upstream tag (e.g. `xmage_1.4.60V1`), or type
+   `latest` to auto-pick the newest upstream release.
+3. Run it. The workflow fetches the tag, rebases the custom stack onto it, pushes the
+   tag + `master`, then builds and publishes the release, Docker image, and Pages config.
+
+That's it. If the rebase hits a merge conflict the run **fails** (you get the GitHub
+failure email) — fall back to the [manual procedure](#manual-procedure-fallback--on-conflict)
+below for that one release. Leaving **upstream_tag** empty just rebuilds the current
+`master` without rebasing.
+
 ## How the fork is structured
 
 ```
@@ -45,14 +58,19 @@ name is which upstream tag the new base sits on — nothing to edit by hand.
 > release tag must be pushed to origin (step 1b below) *before* the build runs, otherwise
 > the release falls back to the newest `xmage_*` tag origin already has and is mis-named.
 
-## Prerequisites (one-time)
+## Manual procedure (fallback / on conflict)
+
+Use this only when the one-click run fails on a rebase conflict, or when you want to
+run the compile-check locally before publishing.
+
+### Prerequisites (one-time)
 
 - The upstream remote exists: `git remote -v` should show
   `xmage  git@github.com:magefree/mage.git`.
   Add it if missing: `git remote add xmage git@github.com:magefree/mage.git`
 - JDK 11 for local compile checks (project builds on JDK 11; see `.sdkmanrc`).
 
-## Step-by-step: cut a new release
+### Step-by-step
 
 Replace `1.4.60V1` with the new upstream release tag, and `1.4.59V1` with the previous
 one (the tag the current `master` is based on — check with
