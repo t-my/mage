@@ -41,6 +41,10 @@ It then publishes the release as tag **`release-xmage_1.4.59V1`**, titled
 `ghcr.io/t-my/mage:xmage_1.4.59V1`. So the **only** thing that controls the release
 name is which upstream tag the new base sits on — nothing to edit by hand.
 
+> ⚠️ `git describe` in CI only sees tags **present on origin (t-my/mage)**. The upstream
+> release tag must be pushed to origin (step 1b below) *before* the build runs, otherwise
+> the release falls back to the newest `xmage_*` tag origin already has and is mis-named.
+
 ## Prerequisites (one-time)
 
 - The upstream remote exists: `git remote -v` should show
@@ -59,6 +63,12 @@ cd mage
 
 # 1. Fetch the new upstream release tag
 git fetch xmage tag xmage_1.4.60V1
+
+# 1b. CRITICAL: push that tag to origin (t-my/mage). The Build and Publish workflow
+#     derives the release name from `git describe --tags --match 'xmage_*'`, and CI only
+#     sees tags that exist on origin. A branch push does NOT push tags. If you skip this,
+#     the release is mis-named after the newest xmage_* tag origin happens to have.
+git push origin xmage_1.4.60V1
 
 # 2. Identify the custom commits currently on master (the stack to carry over).
 #    These are everything on master that isn't in the previous upstream base.
