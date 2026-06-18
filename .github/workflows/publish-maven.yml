@@ -1,0 +1,56 @@
+name: Publish Maven artifacts
+
+# Build the XMage modules the gateway consumes and deploy them to this repo's GitHub Packages
+# Maven registry (https://maven.pkg.github.com/t-my/mage), so downstreams resolve org.mage:*
+# as ordinary dependencies instead of compiling XMage themselves.
+#
+# Run manually after bumping the pinned version, or automatically when a release tag is pushed.
+# Note: release versions are immutable in GitHub Packages — re-running for an already-published
+# version (e.g. 1.4.59) fails with a 409. Bump the version to republish.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['xmage_*']
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-maven
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Compiling the full card pool is disk-hungry — reclaim space first.
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Set up JDK 11 (XMage builds on 11) + Maven settings for GitHub Packages
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+          server-id: github                 # matches altDeploymentRepository id below
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      # Same module set as bootstrap/bootstrap.sh, but deploy (publish) instead of install.
+      # -am pulls in their parent/dependency modules so the published closure is self-contained.
+      - name: Deploy org.mage artifacts
+        env:
+          MAVEN_USERNAME: ${{ github.actor }}
+          MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_OPTS: -Xmx4g
+        run: |
+          mvn -B -U -DskipTests \
+            -pl Mage,Mage.Sets,Mage.Common,Mage.Server.Plugins/Mage.Game.TwoPlayerDuel,Mage.Server.Plugins/Mage.Player.AI,Mage.Server.Plugins/Mage.Player.AI.MA,Mage.Server.Plugins/Mage.Player.Human \
+            -am \
+            deploy \
+            -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/t-my/mage
